@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Discussion Group</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        
+        textarea {
+            width: 90%;
+            padding: 5px;
+            margin-bottom: 10px;
+        }
+        
+        #talks {
+            padding: 8px;
+            font-size: 18px;
+        }
+        
+        #talks span {
+            display: block;
+            margin: 5px;
+            border-radius: 10px;
+        }
+        
+        #talks span {
+            white-space: pre-wrap;
+            /* background-color: antiquewhite; */
+            padding-left: 10px;
+            padding-right: 10px;
+            border: 2px solid;
+            width: 85%;
+        }
+        
+        .red {
+            /* border-color: red; */
+            background-color: #fee;
+        }
+        
+        .green {
+            /* border-color: green; */
+            background-color: #efe;
+        }
+        
+        .blue {
+            /* border-color: blue; */
+            background-color: #eef;
+        }
+        
+        .yellow {
+            /* border-color: blue; */
+            background-color: #ff9;
+        }
+        
+        div>.black {
+            border-color: black;
+        }
+        
+        .input-container {
+            display: flex;
+            gap: 20px;
+            /* Space between the input boxes */
+            justify-content: center;
+            margin-top: 20px;
+        }
+        /* Style for input boxes */
+        
+        input {
+            padding: 8px 12px;
+            font-size: 14px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        /* Optional: Label styling */
+        
+        label {
+            font-size: 14px;
+            margin-right: 8px;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Discussion Group</h1>
+    <p>You need Chrome <b>Optimization Guide On Device Model</b> enabled. Follow <a href="https://www.chromeai.org/">this
+            link</a></p>
+    <p>Currently, this language capabilities are grounded in English, but don't worry - it's all yours to explore offline, too! When you're not connected to the internet, this AI uses the power of Google's Gemini Nano to generate content, and it's working
+        beautifully for a lot of thing.</p>
+    <p></p>
+    <h2>Your Characters</h2>
+    <textarea id="u0" placeholder="Rapper" cols="50" class="red">You are a young, active rapper who is making waves in the music industry. You are in their early 20s, hailing from a bustling, vibrant urban neighborhood that has shaped their gritty yet aspirational persona. You try to ryhm your words everytime.</textarea>
+    <textarea id="u1" placeholder="Shy Girl" cols="50" class="green">You are a sensitive and shy girl, around 17 years old, with an introspective nature. Your tends to avoid confrontation and speaks softly, often second-guessing her words. Despite her quiet demeanor, she has a deep inner world, filled with creative ideas and passions that you are hesitant to share. You often feels overwhelmed in social situations, preferring to observe rather than participate.</textarea>
+    <textarea id="u2" placeholder="Blue" cols="50" class="blue">You are a brilliant yet acerbic scholar renowned for your vast knowledge across various fields of history, philosophy, and science. While your intellect is undeniable, your sharp tongue and no-nonsense attitude often leave others feeling a little bruised. You're quick with biting remarks, and your sarcasm knows no bounds when confronted with ignorance or stupidity. You aren't afraid to speak your mind, whether it's about academic rivals, historical figures, or the latest scandal.</textarea>
+    <textarea id="u3" placeholder="Yellow" cols="50" class="yellow">You’re a stay-at-home mom, having two young kids, always running around the house, dealing with daily chaos, and trying to keep up with neighborhood gossip. You may not have a fancy education, but you know everything going on in the neighborhood, especially about who’s up to what. And you always defending your opinion whenever comes</textarea>
+    <div class="input-container">
+        <div>
+            <label for="max_words">Max Number of Words:</label>
+            <input type="number" id="max_words" name="max-words" min="20" value="50">
+        </div>
+        <div>
+            <label for="conversation_rounds">Conversation Rounds:</label>
+            <input type="number" id="conversation_rounds" name="conversation-rounds" min="1" value="10">
+        </div>
+        <div>
+            <label for="temperature">Param Temperature</label>
+            <input type="number" id="temperature" name="temperature" min="0" value="0.9">
+        </div>
+        <div>
+            <label for="topK">Param TopK:</label>
+            <input type="topK" id="topK" name="topK" min="5" value="15">
+        </div>
+
+    </div>
+    <h2>Topic Prompt. Ctrl+Enter to Start </h2>
+    <textarea id="textarea2" placeholder="Enter prompt here..." rows="4"></textarea>
+
+    <div id='talks'>
+        <!--This will be added by JavaScript -->
+    </div>
+</body>
+<script>
+    const u0 = document.getElementById('u0');
+    const u1 = document.getElementById('u1');
+    const u2 = document.getElementById('u2');
+    const u3 = document.getElementById('u3');
+    let go = true
+    const sessions = []
+    const last_num = []
+    let last_msg = ''
+    let total_round = 15
+
+
+    const textarea2 = document.getElementById('textarea2');
+    window.textarea2.onkeyup = (ev) => {
+        if (ev.key === 'Enter' && event.ctrlKey) {
+            doAI()
+        }
+    }
+
+    async function init(prompt, color) {
+        const sys_prompt = prompt + '\nYou just heard that:\n' + textarea2.value
+        let initialPrompt = {
+            systemPrompt: sys_prompt,
+            temperature: temperature.value,
+            topK: topK.value
+        }
+        let session = await ai.languageModel.create(initialPrompt);
+        sessions.push({
+            session: session,
+            color: color
+        })
+    }
+
+    async function doAI() {
+        const txt = textarea2.value
+        if (txt.length === 0) {
+            alert("Please enter a prompt")
+            return
+        }
+        createMessageDiv('black').then(span => {
+            textarea2.disabled = true
+            span.innerText = txt
+        });
+        if (sessions.length <= 0) {
+            document.querySelectorAll('textarea').forEach(i => i.disabled = true)
+            document.querySelectorAll('input').forEach(i => i.disabled = true)
+            total_round = conversation_rounds.value
+            await init(u0.value, 'red')
+            await init(u1.value, 'green')
+            await init(u2.value, 'blue')
+            await init(u3.value, 'yellow')
+        }
+        next(txt)
+    }
+
+    async function next(msg) {
+        const randomNumber = next_num()
+
+        let prompt0 = last_msg + '\n\n' + msg + `\nReply within ${max_words.value} words.`
+        console.log('doing ' + sessions[randomNumber].color, last_num)
+        last_msg = msg
+        try {
+
+            await createMessageDiv(sessions[randomNumber].color).then(async span => {
+                const stream = sessions[randomNumber].session.promptStreaming(prompt0)
+                for await (const chunk of stream) {
+                    span.innerText = chunk
+                }
+                if (go && total_round-- > 0) {
+                    next(span.innerText)
+                } else {
+                    createMessageDiv().then(span => span.innerText = 'END OF CONVERSATIONS')
+                }
+            })
+        } catch (e) {
+            console.log(e)
+            next(msg)
+        }
+    }
+
+    function next_num(max = 4) {
+        let n
+        do {
+            n = Math.floor(Math.random() * max);
+        } while (last_num.includes(n))
+        if (last_num.length > 1) {
+            last_num.shift()
+        }
+        last_num.push(n)
+        return n
+    }
+
+    async function createMessageDiv(color = 'black') {
+        let talk = document.createElement('div');
+        talk.innerText = `${new Date().toLocaleTimeString()}\n`
+
+        innerSpan = document.createElement('span');
+        innerSpan.classList.add(color);
+        talk.appendChild(innerSpan);
+        talks.appendChild(talk);
+        innerSpan.innerText = '\n'
+        return innerSpan
+    }
+    const text_not_ready = "Your browser doesn't support Chrome AI"
+    try {
+        if (!window.ai || !window.ai.languageModel || !window.ai.languageModel.capabilities) {
+            alert(text_not_ready);
+        } else {
+            window.ai.languageModel.capabilities().then((capabilities) => {
+                if (capabilities.available !== 'readily') {
+                    alert(text_not_ready);
+                }
+            })
+        }
+    } catch (e) {
+        console.log(e)
+        alert(text_not_ready);
+    }
+    textarea2.focus();
+</script>
+
+</html>
