@@ -19,7 +19,7 @@ On the implementation side, I am using a combination of plain HTML, CSS, and Jav
 
 ## After thought
 
-####The Power of the Nano Model
+### The Power of the Nano Model
 
 You're already aware that our application is running on the powerful Gemini Nano model, which is remarkably compact. And the best part? You can experience its impressive capabilities without breaking the bank - in fact, it's more accessible than ever!
 
