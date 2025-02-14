@@ -187,7 +187,7 @@
             await createMessageDiv(sessions[randomNumber].color).then(async span => {
                 const stream = sessions[randomNumber].session.promptStreaming(prompt0)
                 for await (const chunk of stream) {
-                    span.innerText = chunk
+                    span.innerText += chunk
                 }
                 if (go && total_round-- > 0) {
                     next(span.innerText)
